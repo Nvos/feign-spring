@@ -2,19 +2,16 @@ package com.czort.app;
 
 import com.czort.app.backend.User;
 import com.czort.app.client.UserClient;
+import com.czort.app.view.StandardView;
 import com.vaadin.data.Binder;
 import com.vaadin.data.provider.Query;
 import com.vaadin.navigator.View;
 import com.vaadin.spring.annotation.SpringComponent;
 import com.vaadin.spring.annotation.SpringView;
-import com.vaadin.ui.Button;
-import com.vaadin.ui.Grid;
-import com.vaadin.ui.TextField;
-import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-import javax.annotation.PostConstruct;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -23,17 +20,15 @@ import java.util.stream.Collectors;
 @SpringComponent
 @SpringView(name = MainView.VIEW_NAME)
 @RequiredArgsConstructor
-public class MainView extends VerticalLayout implements View {
-
+public class MainView extends StandardView<MainPresenter> implements View {
     public static final String VIEW_NAME = "MainView";
 
-    private final UserClient userClient;
     private Grid<User> grid;
     private Binder<User> userBinder;
 
     private Grid<User> createUserGrid() {
         Grid<User> grid = new Grid<>();
-        grid.setItems(Objects.requireNonNull(userClient.getAll().getBody()));
+        grid.setItems(presenter.findUsers());
 
         grid.addColumn(User::getId).setCaption("id");
         grid.addColumn(User::getUsername).setCaption("username");
@@ -67,10 +62,10 @@ public class MainView extends VerticalLayout implements View {
             User bean = userBinder.getBean();
             User result = null;
             if (bean.getId() != null) {
-                result = userClient.update(bean).getBody();
+                result = presenter.updateUser(bean);
                 grid.getDataProvider().refreshItem(result);
             } else {
-                result = userClient.save(bean).getBody();
+                result = presenter.createUser(bean);
                 List<User> users = grid.getDataProvider().fetch(new Query<>()).collect(Collectors.toList());
                 users.add(0, result);
                 grid.setItems(users);
@@ -85,12 +80,14 @@ public class MainView extends VerticalLayout implements View {
         return layout;
     }
 
-    @PostConstruct()
-    public void init() {
-        log.info("Init");
-
-        addComponent(createUserForm());
+    @Override
+    public Component root() {
+        VerticalLayout layout = new VerticalLayout();
+        VerticalLayout userForm = createUserForm();
         this.grid = createUserGrid();
-        addComponent(grid);
+
+        layout.addComponents(userForm, this.grid);
+
+        return layout;
     }
 }

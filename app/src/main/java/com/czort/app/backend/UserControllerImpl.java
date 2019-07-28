@@ -3,12 +3,14 @@ package com.czort.app.backend;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.persistence.EntityNotFoundException;
 import java.util.List;
 
 @RestController
+@RequestMapping(("/user"))
 @RequiredArgsConstructor
 public class UserControllerImpl implements UserController {
 
