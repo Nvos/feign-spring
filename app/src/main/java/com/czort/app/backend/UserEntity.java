@@ -10,8 +10,13 @@ import javax.persistence.Id;
 @Entity
 @Data
 public class UserEntity {
-    @Id @GeneratedValue(strategy= GenerationType.AUTO)
-    private Integer id;
-    private String name;
-    private String email;
+
+	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	private Integer id;
+
+	private String name;
+
+	private String email;
+
 }

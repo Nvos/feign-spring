@@ -3,11 +3,13 @@ package com.czort.app.backend;
 import java.util.List;
 
 public interface UserService {
-    User save(User user);
 
-    User update(User user);
+	User save(User user);
 
-    User getById(Integer id);
+	User update(User user);
 
-    List<User> getAll();
+	User getById(Integer id);
+
+	List<User> getAll();
+
 }

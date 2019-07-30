@@ -15,26 +15,28 @@ import java.util.List;
 @SpringComponent
 @RequiredArgsConstructor
 public class MainPresenter extends StandardPresenter<MainView, MainModel> {
-    private final UserClient userClient;
 
-    public List<User> findUsers() {
-        return userClient.getAll().getBody();
-    }
+	private final UserClient userClient;
 
-    public User createUser(User params) {
-        return userClient.save(params).getBody();
-    }
+	public List<User> findUsers() {
+		return userClient.getAll().getBody();
+	}
 
-    public User updateUser(User params) {
-        return userClient.update(params).getBody();
-    }
+	public User createUser(User params) {
+		return userClient.save(params).getBody();
+	}
 
-    public User findUserById(Integer id) {
-        return userClient.getById(id).getBody();
-    }
+	public User updateUser(User params) {
+		return userClient.update(params).getBody();
+	}
 
-    @Override
-    protected MainModel initialModel() {
-        return new MainModel();
-    }
+	public User findUserById(Integer id) {
+		return userClient.getById(id).getBody();
+	}
+
+	@Override
+	protected MainModel initialModel() {
+		return new MainModel();
+	}
+
 }

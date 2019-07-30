@@ -1,7 +1,6 @@
 package com.czort.app;
 
 import com.czort.app.backend.User;
-import com.czort.app.client.UserClient;
 import com.czort.app.view.StandardView;
 import com.vaadin.data.Binder;
 import com.vaadin.data.provider.Query;
@@ -13,7 +12,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -21,73 +19,76 @@ import java.util.stream.Collectors;
 @SpringView(name = MainView.VIEW_NAME)
 @RequiredArgsConstructor
 public class MainView extends StandardView<MainPresenter> implements View {
-    public static final String VIEW_NAME = "MainView";
 
-    private Grid<User> grid;
-    private Binder<User> userBinder;
+	public static final String VIEW_NAME = "MainView";
 
-    private Grid<User> createUserGrid() {
-        Grid<User> grid = new Grid<>();
-        grid.setItems(presenter.findUsers());
+	private Grid<User> grid;
 
-        grid.addColumn(User::getId).setCaption("id");
-        grid.addColumn(User::getUsername).setCaption("username");
-        grid.addColumn(User::getEmail).setCaption("email");
+	private Binder<User> userBinder;
 
-        grid.addItemClickListener(event -> {
-            if(event.getMouseEventDetails().isDoubleClick()) {
-                userBinder.setBean(event.getItem());
-            }
-        });
+	private Grid<User> createUserGrid() {
+		Grid<User> grid = new Grid<>();
+		grid.setItems(presenter.findUsers());
 
-        return grid;
-    }
+		grid.addColumn(User::getId).setCaption("id");
+		grid.addColumn(User::getUsername).setCaption("username");
+		grid.addColumn(User::getEmail).setCaption("email");
 
-    private VerticalLayout createUserForm() {
-        userBinder = new Binder<>(User.class);
-        userBinder.setBean(new User());
+		grid.addItemClickListener(event -> {
+			if (event.getMouseEventDetails().isDoubleClick()) {
+				userBinder.setBean(event.getItem());
+			}
+		});
 
-        TextField nameField = new TextField();
-        TextField emailField = new TextField();
+		return grid;
+	}
 
-        userBinder.forField(nameField).bind("username");
-        userBinder.forField(emailField).bind("email");
+	private VerticalLayout createUserForm() {
+		userBinder = new Binder<>(User.class);
+		userBinder.setBean(new User());
 
-        VerticalLayout layout = new VerticalLayout();
-        layout.addComponent(nameField);
-        layout.addComponent(emailField);
+		TextField nameField = new TextField();
+		TextField emailField = new TextField();
 
-        Button save = new Button("Save", (clickEvent) -> {
+		userBinder.forField(nameField).bind("username");
+		userBinder.forField(emailField).bind("email");
 
-            User bean = userBinder.getBean();
-            User result = null;
-            if (bean.getId() != null) {
-                result = presenter.updateUser(bean);
-                grid.getDataProvider().refreshItem(result);
-            } else {
-                result = presenter.createUser(bean);
-                List<User> users = grid.getDataProvider().fetch(new Query<>()).collect(Collectors.toList());
-                users.add(0, result);
-                grid.setItems(users);
-                grid.getDataProvider().refreshAll();
-            }
+		VerticalLayout layout = new VerticalLayout();
+		layout.addComponent(nameField);
+		layout.addComponent(emailField);
 
-            userBinder.setBean(new User());
-        });
+		Button save = new Button("Save", (clickEvent) -> {
 
-        layout.addComponent(save);
+			User bean = userBinder.getBean();
+			User result = null;
+			if (bean.getId() != null) {
+				result = presenter.updateUser(bean);
+				grid.getDataProvider().refreshItem(result);
+			}
+			else {
+				result = presenter.createUser(bean);
+				List<User> users = grid.getDataProvider().fetch(new Query<>()).collect(Collectors.toList());
+				users.add(0, result);
+				grid.setItems(users);
+				grid.getDataProvider().refreshAll();
+			}
 
-        return layout;
-    }
+			userBinder.setBean(new User());
+		});
 
-    @Override
-    public Component root() {
-        VerticalLayout layout = new VerticalLayout();
-        VerticalLayout userForm = createUserForm();
-        this.grid = createUserGrid();
+		layout.addComponent(save);
 
-        layout.addComponents(userForm, this.grid);
+		return layout;
+	}
 
-        return layout;
-    }
+	@Override
+	public Component root() {
+		VerticalLayout layout = new VerticalLayout();
+		VerticalLayout userForm = createUserForm();
+		this.grid = createUserGrid();
+
+		layout.addComponents(userForm, this.grid);
+		return layout;
+	}
+
 }

@@ -1,12 +1,18 @@
 package com.czort.app.backend;
 
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.*;
 
 @Data
-@EqualsAndHashCode(of={ "id" })
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+@EqualsAndHashCode(of = { "id" })
 public class User {
-    private Integer id;
-    private String username;
-    private String email;
+
+	private Integer id;
+
+	private String username;
+
+	private String email;
+
 }

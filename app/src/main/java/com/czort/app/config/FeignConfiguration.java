@@ -7,8 +7,9 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class FeignConfiguration {
 
-    @Bean
-    public Client feignClient() {
-        return new Client.Default(null, null);
-    }
+	@Bean
+	public Client feignClient() {
+		return new Client.Default(null, null);
+	}
+
 }
